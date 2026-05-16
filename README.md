@@ -22,19 +22,21 @@ As an example:
 
 ### Pre-requisite - create the Quarkus datasources
 
-You must first create the Quarkus datasource that will be used. You can add them in `<keycloak>/conf/quarkus.properties`:
+You must first create the Quarkus datasource that will be used. You can add them in `<keycloak>/conf/keycloak.conf`:
 
-    quarkus.datasource.user-store.db-kind=h2
-    quarkus.datasource.user-store.username=sa
-    quarkus.datasource.user-store.jdbc.url=jdbc:h2:mem:user-store;DB_CLOSE_DELAY=-1`
-    quarkus.datasource.user-store.jdbc.transactions=xa
+    db-kind-user-store=dev-mem
+    db-url-full-user-store=jdbc:h2:mem:user-store;DB_CLOSE_DELAY=-1
+    db-username-user-store=user
+    db-password-user-store=password
+    transaction-xa-enabled-user-store=true
 
-    quarkus.datasource.user-store2.db-kind=h2
-    quarkus.datasource.user-store2.username=sa
-    quarkus.datasource.user-store2.jdbc.url=jdbc:h2:mem:user-store;DB_CLOSE_DELAY=-1`
-    quarkus.datasource.user-store2.jdbc.transactions=xa
+    db-kind-user-store2=dev-mem
+    db-url-full-user-store2=jdbc:h2:mem:user-store;DB_CLOSE_DELAY=-1
+    db-username-user-store2=user
+    db-password-user-store2=password
+    transaction-xa-enabled-user-store2=true
 
-**Please note: `quarkus.properties` is not the one in the extension, but in the Keycloak server `conf` folder**
+**Please note: `keycloak.conf` is not the one in the extension, but in the Keycloak server `conf` folder, ref. https://github.com/keycloak/keycloak-quickstarts/blob/main/extension/user-storage-jpa/conf/keycloak.conf **
 
 Differently from the previously JBoss-based Keycloak, in Quarkus 
 you also need to explicitly maintain datasources in [`src/main/resources/META-INF/persistence.xml`](https://github.com/nicolabeghin/keycloak-multiple-ds-user-storage/blob/master/src/main/resources/META-INF/persistence.xml) 
@@ -45,7 +47,7 @@ by adding a corresponding  `<persistence-unit>` for each datasource.
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <!-- Sets the name of the datasource to be the same as the datasource name in quarkus.properties-->
-            <property name="hibernate.connection.datasource" value="user-store"/>
+            <property name="jakarta.persistence.jtaDataSource" value="user-store"/>
             <property name="javax.persistence.transactionType" value="JTA"/>
             <property name="hibernate.hbm2ddl.auto" value="none"/>
             <property name="hibernate.show_sql" value="false"/>
@@ -56,7 +58,7 @@ by adding a corresponding  `<persistence-unit>` for each datasource.
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <!-- Sets the name of the datasource to be the same as the datasource name in quarkus.properties-->
-            <property name="hibernate.connection.datasource" value="user-store2"/>
+            <property name="jakarta.persistence.jtaDataSource" value="user-store2"/>
             <property name="javax.persistence.transactionType" value="JTA"/>
             <property name="hibernate.hbm2ddl.auto" value="none"/>
             <property name="hibernate.show_sql" value="false"/>
